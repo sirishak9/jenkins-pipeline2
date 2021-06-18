@@ -1,0 +1,79 @@
+pipeline {
+  agent any
+    tools{
+        jdk 'java'
+        maven 'maven'
+    }
+  
+  stages {
+     
+                  stage('CleanWorkspace') {
+            steps {
+                cleanWs()
+            }
+        }
+                                
+                                
+                stage("Code Checkout"){
+            steps {
+                script {
+                                                                
+                    sh "git clone https://github.com/mhali922/jenkins-pipeline2.git"
+                   
+                    
+                }
+            }
+        }      
+                                
+                                
+                                
+    stage("Build Step"){
+            steps {
+                script {
+                                                                
+                    sh "cd $workspace"; "sh echo $workspace"; sh "cp -rp $workspace/jenkins-pipeline2/* $workspace";
+                    sh "ls -lhrt ";
+                    sh "mvn -version  ";
+                                                                                sh "mvn clean install"
+                   
+                    
+                }
+            }
+        }
+                stage(" Build Image"){
+            steps {
+                script {
+                                                                
+                    sh "cd $workspace";
+                                                                                sh "docker build -t java:v1.0 ."
+                      
+                }
+            }
+        }
+     
+                                 stage(" Deploy Image"){
+            steps {
+                script {
+
+                                                                                sh "docker run -dit -p 8082:8082 java:v1.0"
+                      
+                }
+            }
+        }
+                                
+                stage(" verify Deployment"){
+            steps {
+                script {
+
+                                                                                sh "docker ps "
+                      
+                }
+            }
+        }
+  
+  
+  
+  }
+
+}
+
